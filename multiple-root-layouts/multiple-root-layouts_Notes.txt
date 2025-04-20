@@ -1,0 +1,72 @@
+=======================================
+🧠 Notes on Multiple Root Layouts in Next.js (App Router)
+=======================================
+
+📌 What is a Root Layout?
+---------------------------
+- Every Next.js App Router app must have a `layout.tsx` file.
+- It defines the common HTML structure (like headers, footers, sidebars, providers).
+- Automatically wraps all pages inside its subtree.
+
+📌 Why Multiple Root Layouts?
+-------------------------------
+- Sometimes different sections of your app need different UI structure.
+- Example:
+  - Marketing site → Minimal layout (Header + Footer)
+  - Dashboard → Sidebar, Auth Provider, etc.
+  - Auth Pages → Clean form layout, no extras
+
+✅ Solution: Use Route Groups with Their Own Layouts!
+
+📁 Folder Structure Example:
+-------------------------------
+app/
+  (marketing)/
+    layout.tsx        ← MarketingLayout
+    home/
+      page.tsx        ← http://localhost:3000/home
+    about/
+      page.tsx        ← http://localhost:3000/about
+
+  (dashboard)/
+    layout.tsx        ← DashboardLayout
+    analytics/
+      page.tsx        ← http://localhost:3000/analytics
+    settings/
+      page.tsx        ← http://localhost:3000/settings
+
+  (auth)/
+    layout.tsx        ← AuthLayout
+    login/
+      page.tsx        ← http://localhost:3000/login
+    register/
+      page.tsx        ← http://localhost:3000/register
+
+🧩 How It Works:
+-------------------------------
+- The `(marketing)`, `(dashboard)`, and `(auth)` folders are **route groups**.
+- Each has its **own layout.tsx**, which acts like a separate root layout.
+- These folders are not reflected in the URL.
+
+🧱 Layout Responsibilities:
+-------------------------------
+- Each `layout.tsx` can include:
+  - Header/Footer
+  - Sidebar
+  - Auth Providers
+  - Custom CSS structure
+  - Theme wrappers
+
+✅ Advantages of Multiple Root Layouts:
+----------------------------------------
+- Cleanly separate UI logic per section
+- Avoid conditional layout logic inside a single layout
+- Easier to maintain and scale
+- Better performance (load only what's needed)
+
+📚 Summary:
+-------------------------------
+- Use `(group-name)/layout.tsx` to define multiple root layouts.
+- Route groups let you organize layout logic without affecting the URL path.
+- This pattern is especially useful in large applications with diverse layout needs.
+
