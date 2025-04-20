@@ -1,0 +1,90 @@
+==============================
+📘 Notes on Route Groups in Next.js (App Router)
+==============================
+
+✅ What Are Route Groups?
+------------------------------
+Route Groups let you organize routes without affecting the URL structure. 
+You define a route group using parentheses in the folder name, like:
+
+  app/
+    (auth)/
+      login/
+        page.tsx
+
+URL: http://localhost:3000/login
+
+Note: The "(auth)" part is NOT visible in the URL.
+
+------------------------------
+🧠 Why Use Route Groups?
+------------------------------
+- Organize routes cleanly without changing URLs
+- Apply different layouts to different groups
+- Maintain better separation between app sections
+- Share layouts/providers in isolated sections
+
+------------------------------
+📁 Folder Structure Example:
+------------------------------
+app/
+  (dashboard)/
+    layout.tsx        ← Dashboard Layout
+    home/
+      page.tsx        ← http://localhost:3000/home
+  (auth)/
+    layout.tsx        ← Auth Layout
+    login/
+      page.tsx        ← http://localhost:3000/login
+    register/
+      page.tsx        ← http://localhost:3000/register
+
+------------------------------
+🧱 Use Case: Layout Separation
+------------------------------
+You can define a separate layout for each group:
+
+- app/(auth)/layout.tsx → Auth layout
+- app/(dashboard)/layout.tsx → Dashboard layout
+
+Only the files inside each group are wrapped with that layout.
+
+------------------------------
+🤹 Nesting Route Groups
+------------------------------
+Yes, route groups can be nested:
+
+  app/
+    (app)/             ← Authenticated app group
+      (settings)/
+        page.tsx
+
+URL remains: /settings
+
+------------------------------
+🧩 Route Groups + Parallel Routes
+------------------------------
+Route groups work well with parallel routes.
+
+Example:
+  app/
+    dashboard/
+      @analytics/(analytics)/page.tsx
+      @inbox/(inbox)/page.tsx
+
+This enables rendering different sections (slots) in parallel with shared layouts.
+
+------------------------------
+⚠️ Important Notes:
+------------------------------
+- Route groups are only for the App Router (app directory)
+- They do not change the URL
+- You can define layouts, templates, or error boundaries inside a route group
+
+------------------------------
+📝 Summary:
+------------------------------
+- Use parentheses: (groupName)
+- Organize routes without changing URLs
+- Helpful for layout separation
+- Compatible with parallel routes
