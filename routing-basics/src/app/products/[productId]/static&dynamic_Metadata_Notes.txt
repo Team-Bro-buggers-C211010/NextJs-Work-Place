@@ -1,0 +1,95 @@
+
+===========================================
+🧠 Notes on Metadata in Next.js App Router
+===========================================
+
+Metadata in Next.js is used to customize <head> tags like title, description, Open Graph, Twitter cards, etc.
+
+There are two ways to use metadata in the App Router:
+
+──────────────────────────────
+🔹 1. Static Metadata
+──────────────────────────────
+
+👉 Use when metadata doesn’t depend on dynamic data (e.g., hardcoded titles).
+
+✅ How to use:
+
+In your `page.tsx` or `layout.tsx`:
+
+```tsx
+// app/about/page.tsx
+
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Learn more about our team and mission',
+};
+
+export default function AboutPage() {
+  return <h1>About Page</h1>;
+}
+```
+
+💡 This metadata is added during build time and is static.
+
+──────────────────────────────
+🔹 2. Dynamic Metadata
+──────────────────────────────
+
+👉 Use when metadata depends on dynamic parameters, such as productId, slug, etc.
+
+✅ How to use:
+
+You need to use an async function named `generateMetadata` exported from the same file.
+
+```tsx
+// app/products/[productId]/page.tsx
+
+import { Metadata } from 'next';
+
+type Props = {
+  params: { productId: string };
+};
+
+export const generateMetadata = async (
+  { params }: Props
+): Promise<Metadata> => {
+  const productId = params.productId;
+
+  // Optionally, fetch product data from DB or API here
+
+  return {
+    title: `Product ${productId} Details`,
+    description: `Details about product ${productId}`,
+  };
+};
+
+const ProductPage = ({ params }: Props) => {
+  const { productId } = params;
+
+  return <h1>Product Details for {productId}</h1>;
+};
+
+export default ProductPage;
+```
+
+💡 This is useful for dynamic routes like `/products/[productId]`.
+
+──────────────────────────────
+📌 Rules & Tips:
+──────────────────────────────
+✅ Static: `export const metadata = { ... }`
+✅ Dynamic: `export const generateMetadata = async () => { ... }`
+
+⚠️ Function name must be exactly `generateMetadata` (not `generatedMetadata`)
+⚠️ Place the metadata in `page.tsx` or `layout.tsx` under the `app/` directory
+⚠️ Works only in the App Router (`app/` folder), not `pages/`
+
+──────────────────────────────
+📚 Summary
+──────────────────────────────
+🔸 Use Static Metadata for static routes (e.g., `/about`, `/contact`)
+🔸 Use Dynamic Metadata for dynamic routes (e.g., `/blog/[slug]`, `/product/[id]`)
+🔸 Enhances SEO, social sharing (Open Graph), and browser tab titles
