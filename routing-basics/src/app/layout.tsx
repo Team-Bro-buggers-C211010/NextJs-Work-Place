@@ -28,7 +28,7 @@ export default function RootLayout({
         </header>
         {children}
         <footer style={{ padding: '1rem', backgroundColor: '#f5f5f5' }}>
-          <p>&copy; 2023 My App</p>
+          <p>&copy; 2025 My App</p>
         </footer>
       </body>
     </html>
