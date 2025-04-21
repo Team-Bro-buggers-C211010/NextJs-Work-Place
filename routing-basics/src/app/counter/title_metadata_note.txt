@@ -1,0 +1,70 @@
+
+===========================================
+🧠 Notes on `title` Metadata in Next.js App Router
+===========================================
+
+The `title` field in Next.js metadata sets the page title shown in the browser tab.
+
+You can use it in two ways:
+
+──────────────────────────────
+🔹 1. As a String
+──────────────────────────────
+
+👉 Use this when you want a static title.
+
+✅ Example:
+
+```tsx
+// app/about/page.tsx
+
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'About Us',
+};
+```
+
+💡 This will simply set the page title to "About Us".
+
+
+──────────────────────────────
+🔹 2. As an Object
+──────────────────────────────
+
+👉 Use this when you want more control over the title structure, such as templating.
+
+✅ Example:
+
+```tsx
+// app/layout.tsx
+
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: {
+    default: 'My Website',
+    template: '%s | My Website',
+  },
+};
+```
+
+💡 In this case:
+- If a page provides `title: "About"`, the full title becomes: `About | My Website`
+- If no specific title is provided, it falls back to `default: "My Website"`
+
+
+──────────────────────────────
+📌 When to Use What?
+──────────────────────────────
+🔸 Use `string` when you just want a fixed title for a page.
+🔸 Use `object` when you want dynamic title formatting using templates.
+
+──────────────────────────────
+📚 Summary
+──────────────────────────────
+✅ `title: 'Home'` → Just a plain title
+✅ `title: { default: 'App', template: '%s | App' }` → For templated dynamic titles
+
+🎯 Works perfectly when paired with static or dynamic metadata declarations.
+
