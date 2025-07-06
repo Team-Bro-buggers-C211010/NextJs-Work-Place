@@ -30,7 +30,6 @@ export default function RootLayout({
           height: "100vh",
         }}
       >
-        {/* In layout page (Default Behavior), it not rerender the input field because it is shared and not changed on navigate */}
         <div>
           <input className="p-2 border border-gray-300" value={input} onChange={(e) => setInput(e.target.value)} />
         </div> 

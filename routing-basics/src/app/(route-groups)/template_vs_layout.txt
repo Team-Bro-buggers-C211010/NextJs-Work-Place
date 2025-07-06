@@ -1,0 +1,82 @@
+🧠 Notes on `template.tsx` vs `layout.tsx` in Next.js App Router
+===========================================
+
+In Next.js App Router (`app/` directory), both `layout.tsx` and `template.tsx` are special files used to wrap pages and control UI structure — but they behave differently.
+
+──────────────────────────────
+🔹 1. layout.tsx
+──────────────────────────────
+
+👉 Purpose: Persistent wrapper across navigations.
+
+✅ Characteristics:
+- Renders once and **persists** across route changes.
+- Useful for things like sidebars, navbars, providers.
+- Doesn't remount when you navigate to sibling routes.
+- React state **is preserved** between navigations.
+
+✅ Example:
+
+```tsx
+// app/dashboard/layout.tsx
+
+export default function DashboardLayout({ children }) {
+  return (
+    <div className="dashboard-layout">
+      <Sidebar />
+      <main>{children}</main>
+    </div>
+  );
+}
+```
+
+📌 Navigation from `/dashboard/settings` to `/dashboard/profile` keeps the layout alive.
+
+──────────────────────────────
+🔹 2. template.tsx
+──────────────────────────────
+
+👉 Purpose: Re-render wrapper on each navigation.
+
+✅ Characteristics:
+- Renders fresh **every time** you navigate to a new route.
+- Use when you need **dynamic layout behavior** per page.
+- Useful for animations, transitions, or resetting local state.
+- React state **is NOT preserved**.
+- DOM elements are recreate
+- state is cleared
+- effects are re-synchronized
+
+✅ Example:
+
+```tsx
+// app/blog/[slug]/template.tsx
+
+export default function BlogTemplate({ children }) {
+  return (
+    <div className="fade-in-animation">
+      {children}
+    </div>
+  );
+}
+```
+
+📌 Navigating between `/blog/post-1` to `/blog/post-2` will re-render the template from scratch.
+
+──────────────────────────────
+📌 Summary of Differences
+──────────────────────────────
+
+| Feature          | layout.tsx                  | template.tsx                     |
+|------------------|-----------------------------|----------------------------------|
+| Re-renders on nav | ❌ No                       | ✅ Yes                            |
+| State preserved   | ✅ Yes                      | ❌ No                             |
+| Use case          | Persistent layout (sidebar) | Per-page animations, resets      |
+| Performance       | Better (cached)             | Fresh (no caching)               |
+| Shared across routes | Yes (inside same segment) | No (renders new every time)      |
+
+──────────────────────────────
+📚 Final Tips:
+──────────────────────────────
+🔸 Use `layout.tsx` when UI should persist across nested routes.
+🔸 Use `template.tsx` when each route should render a fresh version (e.g., transition effects or page-specific logic).
