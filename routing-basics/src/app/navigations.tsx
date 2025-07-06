@@ -7,7 +7,9 @@ const navLinks = [
     { href: '/products', label: 'Products' },
     { href: '/counter', label: 'Counter' },
     { href: '/about', label: 'About' },
-]
+    { href: '/articles/breaking-news-123?lang=en', label: 'Articles (English)' },
+    { href: '/articles/breaking-news-123?lang=fr', label: 'Articles (French)' },
+  ]
 export default function Navigation() {
 
 const pathname = usePathname();
