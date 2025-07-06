@@ -1,0 +1,95 @@
+
+===========================================
+🧠 Notes on `loading.tsx` in Next.js App Router
+===========================================
+
+In Next.js (App Router), `loading.tsx` is a special file used to show a **loading UI** when a route or component is loading — especially useful for slow or dynamic content.
+
+──────────────────────────────
+🔹 What is `loading.tsx`?
+──────────────────────────────
+
+- It’s a React component that renders **while your page, layout, or template is loading**.
+- Useful for showing **spinners, skeletons, or placeholders**.
+- Automatically shown when:
+  - A dynamic segment is loading
+  - A server component is waiting for data
+
+──────────────────────────────
+✅ Basic Usage:
+──────────────────────────────
+
+Folder structure:
+
+app/
+  dashboard/
+    page.tsx
+    loading.tsx
+
+`loading.tsx`:
+
+```tsx
+export default function Loading() {
+  return <p>Loading dashboard...</p>;
+}
+```
+
+📌 When the `dashboard/page.tsx` takes time to render (e.g., due to `await` or dynamic import), this loading component is shown automatically.
+
+──────────────────────────────
+💡 Where Can You Use It?
+──────────────────────────────
+
+- Inside any route segment:
+  - `app/products/loading.tsx`
+  - `app/blog/[slug]/loading.tsx`
+- Also inside layouts:
+  - `app/(admin)/layout.tsx` → `loading.tsx` here wraps all child routes
+
+──────────────────────────────
+📌 Behavior
+──────────────────────────────
+
+- Shown **during initial load or transition**
+- Automatically **replaced with the final content**
+- React state inside `loading.tsx` is local (isolated)
+- You can **customize separately per route**
+
+──────────────────────────────
+🧩 Example with Fetching
+──────────────────────────────
+
+If `page.tsx` uses `await` to fetch data:
+
+```tsx
+// app/posts/page.tsx
+
+export default async function PostsPage() {
+  const res = await fetch('https://api.example.com/posts');
+  const posts = await res.json();
+
+  return <PostList posts={posts} />;
+}
+```
+
+Then this will trigger:
+
+```tsx
+// app/posts/loading.tsx
+
+export default function Loading() {
+  return <SkeletonPostList />;
+}
+```
+
+──────────────────────────────
+📚 Summary
+──────────────────────────────
+
+✅ File: `loading.tsx`  
+✅ Automatically used during async rendering  
+✅ Can exist in any segment (`app/x/loading.tsx`)  
+✅ Great for user experience: shows visual feedback  
+✅ Combine with skeletons, spinners, shimmer effects, etc.
+
+🎯 Perfect for improving perceived performance in SSR, dynamic fetch, and suspense loading.

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
-export default function Product() {
+export default async function Product() {
+  await new Promise((resolve) => setTimeout(() => resolve("Intentional delay"), 2000)); // Simulating a delay for demonstration purposes
   return (
     <div>
         <h1>Products Page</h1>
