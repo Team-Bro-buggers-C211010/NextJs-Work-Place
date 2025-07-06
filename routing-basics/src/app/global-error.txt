@@ -1,0 +1,75 @@
+===========================================
+🧠 Notes on Global Error Handling (`global-error.tsx`) in Next.js App Router
+===========================================
+
+Next.js provides a special file `global-error.tsx` that handles **unhandled errors** that occur outside the scope of route segments, such as unexpected failures in root layout or critical shared components.
+
+──────────────────────────────
+🔹 What is `global-error.tsx`?
+──────────────────────────────
+
+- It is a **global error boundary** for the entire app.
+- Placed at the root of the `app/` directory.
+- Catches:
+  - Errors in root `layout.tsx`
+  - Errors not caught by a nested `error.tsx`
+  - Server or client crashes that propagate to the top level
+
+──────────────────────────────
+✅ Basic Usage:
+──────────────────────────────
+
+Folder structure:
+
+app/
+  layout.tsx
+  global-error.tsx
+
+`global-error.tsx`:
+
+```tsx
+'use client';
+
+export default function GlobalError({ error, reset }) {
+  return (
+    <html>
+      <body>
+        <h2>Something went terribly wrong!</h2>
+        <p>{error.message}</p>
+        <button onClick={() => reset()}>Try again</button>
+      </body>
+    </html>
+  );
+}
+```
+
+📌 Since it wraps the entire app, it includes full `<html>` and `<body>` tags.
+
+──────────────────────────────
+📌 Important Rules:
+──────────────────────────────
+
+- Must be a **Client Component** (use `'use client';`).
+- Must be placed **at the root of `app/`**.
+- Required to include full HTML structure (`<html>`, `<body>`).
+- Receives `{ error, reset }` just like other error boundaries.
+
+──────────────────────────────
+💥 When Is It Triggered?
+──────────────────────────────
+
+- Error in `app/layout.tsx` or `app/template.tsx`
+- If no local `error.tsx` exists to catch the error
+- Global SSR or rendering failures
+
+──────────────────────────────
+📚 Summary
+──────────────────────────────
+
+✅ File: `app/global-error.tsx`  
+✅ Must be a Client Component  
+✅ Handles app-wide, uncaught errors  
+✅ Includes full `<html>` and `<body>` tags  
+✅ Complements local `error.tsx` files  
+
+🎯 Useful as a final safety net for fatal rendering issues across your Next.js app.

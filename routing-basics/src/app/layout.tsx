@@ -1,3 +1,4 @@
+import { ErrorWrapper } from './error-wrapper';
 import './globals.css'; // Ensure Tailwind's base styles are imported
 import Navigation from './navigations'; // Import your Navigation component
 export const metadata = {
@@ -26,7 +27,7 @@ export default function RootLayout({
             <Navigation />
           </nav>
         </header>
-        {children}
+        <ErrorWrapper>{children}</ErrorWrapper>
         <footer style={{ padding: '1rem', backgroundColor: '#f5f5f5' }}>
           <p>&copy; 2025 My App</p>
         </footer>
