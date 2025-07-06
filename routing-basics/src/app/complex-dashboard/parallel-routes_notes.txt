@@ -1,0 +1,137 @@
+=======================================================
+🧠 In-Depth Notes on Parallel Routes in Next.js App Router
+=======================================================
+
+- Reference: https://nextjs.org/docs/app/api-reference/file-conventions/parallel-routes
+
+Parallel routes allow multiple pages (or segments) to be rendered side-by-side
+within a single layout, each with its own unique state, loading, and error boundaries.
+
+They are useful when a layout needs to render multiple child routes at the same time,
+instead of replacing one segment like standard nested routes.
+
+Note: Slots are passed as props to the shared parent layout. For the example above, the component in app/layout.js now accepts the @analytics and @team slots props, and can render them in parallel alongside the children prop.
+
+──────────────────────────────
+🔹 What Are Parallel Routes?
+──────────────────────────────
+
+Parallel Routes let you define multiple named slots in a layout, each rendering their
+own route independently. These slots are declared using the `@slotName` folder syntax.
+
+Unlike nested routing which swaps one route in the outlet, parallel routes allow
+multiple routes to coexist and render simultaneously in a layout.
+
+──────────────────────────────
+✅ Basic Anatomy:
+──────────────────────────────
+
+Folder structure:
+app/
+  dashboard/
+    layout.tsx
+    @inbox/
+      page.tsx
+    @analytics/
+      page.tsx
+
+layout.tsx:
+```tsx
+export default function DashboardLayout({
+  inbox,
+  analytics
+}: {
+  inbox: React.ReactNode;
+  analytics: React.ReactNode;
+}) {
+  return (
+    <div style={{ display: 'flex' }}>
+      <aside>{inbox}</aside>
+      <main>{analytics}</main>
+    </div>
+  );
+}
+📌 @inbox and @analytics segments are parallel slots rendered side-by-side.
+
+──────────────────────────────
+🔸 When Do You Need Parallel Routes?
+──────────────────────────────
+
+When multiple views must render independently and simultaneously
+e.g. Sidebar (inbox) + Main content (analytics)
+
+Each view has its own loading, error, and navigation state.
+
+You want clean separation of logic/components instead of managing with booleans.
+
+State preservation between sections (switching inbox doesn’t reset analytics)
+
+Avoids visibility logic like showInbox && <Inbox />
+
+──────────────────────────────
+🆚 Parallel Routes vs Normal Components
+──────────────────────────────
+
+Feature	            Normal Component	      Parallel Routes
+Routing aware	           ❌ No	                 ✅ Yes
+Independent loading	       ❌ Shared	             ✅ Separate
+URL handling	           ❌ Manual	             ✅ Automatic
+SSR/data fetch separation  ❌ Shared logic	     ✅ Independent
+State preservation	       ❌ Manual effort	     ✅ Built-in
+
+──────────────────────────────
+📦 Example Scenario: Dashboard UI
+──────────────────────────────
+
+A dashboard has:
+
+Left panel with @inbox
+
+Right panel with @analytics
+
+Each has:
+
+Different API endpoints
+
+Different load times
+
+Separate loading/error UI
+
+Folder:
+app/
+dashboard/
+    layout.tsx
+    @inbox/
+        loading.tsx
+        error.tsx
+        page.tsx
+    @analytics/
+        loading.tsx
+        error.tsx
+        page.tsx
+
+✅ Each route manages its own lifecycle (loading, error)
+✅ State is scoped and preserved
+✅ Clean and modular file structure
+
+──────────────────────────────
+🧠 Theory Summary
+──────────────────────────────
+
+Parallel routes are ideal for split-view or dashboard UIs.
+
+Layout receives slot components via props like inbox, analytics.
+
+Each slot is its own page, with separate loading, error, and rendering context.
+
+──────────────────────────────
+📚 Summary
+──────────────────────────────
+
+✅ Use when multiple sections must co-exist (Inbox + Details)
+✅ Each section gets independent routing, loading, and error handling
+✅ Avoids manual composition and conditional visibility logic
+✅ Enables routing-aware layouts with slot-based design
+✅ Ideal for dashboards, mail apps, admin panels, IDEs
+
+🎯 Not needed for every layout — use when segments need to render in parallel, not one after another.
