@@ -2,7 +2,6 @@ export default function ProductDetailsLayout({ children }: { children: React.Rea
     return (
         <div>
             {children}
-            <h2>Featured products</h2>
         </div>
     );
 }

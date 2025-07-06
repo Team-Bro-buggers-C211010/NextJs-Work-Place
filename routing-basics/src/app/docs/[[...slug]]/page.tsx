@@ -1,6 +1,8 @@
 // here [...slug] is a catch-all route that will match /docs, /docs/a, /docs/a/b, and so on.
 // [[...slug]] is a nested route, which means that it can be nested inside other routes.
 // The slug parameter is an array of strings, where each string is a part of the URL path.
+// reference: https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes
+
 export default async function Docs({ params }: 
     { params: Promise<{ slug: string[] }> }
 ) {

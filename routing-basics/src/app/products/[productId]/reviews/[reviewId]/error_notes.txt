@@ -1,0 +1,87 @@
+===========================================
+🧠 Notes on `error.tsx` in Next.js App Router
+===========================================
+
+In Next.js App Router, `error.tsx` is a special file used to render a custom UI when a **runtime error** occurs during rendering, data fetching, or layout loading.
+
+──────────────────────────────
+🔹 What is `error.tsx`?
+──────────────────────────────
+
+- It’s a React component placed in any route segment or layout segment.
+- Automatically shown when:
+  - A React error is thrown inside a page/layout/template
+  - A rejected promise occurs during server-side rendering
+
+──────────────────────────────
+✅ Basic Usage:
+──────────────────────────────
+
+Folder structure:
+
+app/
+  dashboard/
+    page.tsx
+    error.tsx
+
+`error.tsx`:
+
+```tsx
+'use client';
+
+import { useEffect } from 'react';
+
+export default function Error({ error, reset }) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
+  return (
+    <div>
+      <h2>Something went wrong!</h2>
+      <button onClick={() => reset()}>Try again</button>
+    </div>
+  );
+}
+```
+
+💡 `reset()` will attempt to re-render the route segment.
+
+──────────────────────────────
+📌 Important Rules:
+──────────────────────────────
+
+- `error.tsx` **must be a Client Component** (`'use client';` is required).
+- Each segment (e.g., `/dashboard`, `/blog/[slug]`) can have its own `error.tsx`.
+- Error boundaries **do not bubble** — the nearest one handles the error.
+
+──────────────────────────────
+💥 When Does It Trigger?
+──────────────────────────────
+
+- A runtime error in a Server Component
+- A thrown error or rejected promise in `generateMetadata()`
+- A failed fetch during SSR
+- A crash in layout, template, or page rendering
+
+──────────────────────────────
+🔁 What Can You Do in `error.tsx`?
+──────────────────────────────
+
+- Log errors (e.g., `console.error()` or send to logging services)
+- Show user-friendly fallback UI
+- Allow retry using `reset()` function
+- Customize per route with different UIs
+
+──────────────────────────────
+📚 Summary
+──────────────────────────────
+
+✅ File: `error.tsx`  
+✅ Must be a Client Component  
+✅ Used for handling runtime rendering errors  
+✅ Can be placed in any route/layout segment  
+✅ Receives two props: `{ error, reset }`  
+✅ Great for improving error recovery and UX
+
+🎯 Perfect for dashboards, dynamic routes, and external API dependencies.
