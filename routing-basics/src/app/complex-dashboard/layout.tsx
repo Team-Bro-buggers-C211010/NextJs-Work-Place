@@ -24,6 +24,6 @@ export default function ComplexDashboardLayout({
       </div>
     </div>
   ) : (
-    login
+    <div className="flex text-4xl font-bold text-amber-300">{login}</div>
   );
 }
