@@ -1,0 +1,69 @@
+=======================================================
+🧠 Why Reloading a Parallel Route Like `/archived` Causes 404
+=======================================================
+
+📍 Scenario Setup:
+
+You are using Next.js Parallel Routes with three slots:
+- @revenue
+- @notifications
+- @user-analytics
+
+You created a route:
+- app/dashboard/@notifications/archived/page.tsx → /dashboard/archived
+
+You visit: **/dashboard/archived**
+
+Everything works fine in client-side navigation (e.g., via <Link>), but...
+
+──────────────────────────────
+❌ Problem: Reloading `/dashboard/archived` causes a 404 page
+
+Why?
+
+Because:
+- Parallel routes rely on **all active slots being resolvable** from the URL.
+- On reload, **Next.js tries to resolve all slots** in the layout.
+- If any required slot (like @revenue or @user-analytics) **has no matching route** AND no `default.tsx`, that segment is **missing**, and Next.js treats the route as **incomplete → 404**.
+
+──────────────────────────────
+✅ Solution: Use `default.tsx` in all unmatched slots
+
+To prevent this issue, create:
+
+app/
+  dashboard/
+    @revenue/
+      default.tsx
+    @notifications/
+      archived/
+        page.tsx
+    @user-analytics/
+      default.tsx
+
+Now:
+- Visiting `/dashboard/archived` will render:
+  - `@notifications/archived/page.tsx`
+  - `@revenue/default.tsx`
+  - `@user-analytics/default.tsx`
+
+✅ No 404
+✅ All slots resolved
+✅ Layout loads fully and predictably
+
+──────────────────────────────
+🧠 Why It Happens
+
+- On navigation (<Link href="/archived">), client-side rendering already loaded layout context, so it works.
+- On full page refresh (server render), Next.js must statically resolve **all active routes for all slots**.
+- If any are missing and no fallback (`default.tsx`) is defined → route becomes invalid → 404.
+
+──────────────────────────────
+📚 Summary
+
+✅ Always define `default.tsx` for each named slot unless it's guaranteed to be matched.  
+✅ This ensures full route resolution and avoids unexpected 404s on reload.  
+✅ Applies especially to **deeply nested layouts** or **split-panel dashboards**.  
+✅ Client-side works due to shared context; SSR requires explicit slot resolution.
+
+🎯 Best practice: Use `default.tsx` in all parallel slots unless they’re always matched in every route.
