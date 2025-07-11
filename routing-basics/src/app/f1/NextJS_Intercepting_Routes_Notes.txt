@@ -1,0 +1,106 @@
+
+=======================================================
+🧠 Notes on Intercepting Routes in Next.js App Router
+=======================================================
+
+Intercepting routes in Next.js let you display a route (e.g., a modal or drawer) **on top of another route**, without fully navigating away from the original page.
+
+This is especially useful for overlays like:
+- Modals (e.g., viewing a post detail over a feed)
+- Slide-in panels
+- Nested previews
+
+──────────────────────────────
+🔸 What Problem Does It Solve?
+──────────────────────────────
+
+Normally, navigating to a route like `/photos/1` **replaces the whole page**.
+But you might want to:
+- Keep `/photos` in the background
+- Show `/photos/1` in a modal
+
+Intercepting routes make this possible by **injecting routes into another layout context**, even if the URL changes.
+
+──────────────────────────────
+✅ Syntax for Intercepting Routes
+──────────────────────────────
+
+You use **segment names with parentheses** to define intercepting behavior.
+
+📁 Folder/File Structure:
+app/
+  feed/
+    page.tsx                ← Background page
+  (modals)/
+    feed/
+      @modal/
+        [id]/
+          page.tsx          ← Intercepted modal route
+
+In this case, `[id]/page.tsx` is not rendered as a full-page, but as an **overlay in the feed layout**, when used with interception patterns.
+
+──────────────────────────────
+🔹 Interception Patterns
+──────────────────────────────
+
+1. ✅ `(.)` → Current level
+- Intercepts the current segment
+- Example: `(.)modal.tsx`
+- Usage: Overlay on top of the current route
+
+2. ✅ `(..)` → One level up
+- Intercepts one level up from the current route
+- Example: `(..)/[id]/page.tsx`
+
+3. ✅ `(..)(..)` → Two levels up
+- Intercepts two levels up
+- Example: `(..)(..)/[id]/page.tsx`
+
+4. ✅ `(...)` → Root level (App root)
+- Intercepts from the top of the tree (global layout)
+- Example: `(...)/[id]/page.tsx`
+
+──────────────────────────────
+🧩 Example Scenario
+
+You are on `/feed` and want to show `/photo/123` as a modal.
+
+Folder:
+app/
+  feed/
+    page.tsx
+    photo/
+      [id]/
+        page.tsx
+
+To intercept and render `/photo/123` over `/feed`, rename the folder like this:
+
+app/
+  (modals)/
+    feed/
+      photo/
+        (.)[id]/
+          page.tsx   ← Intercepts feed layout
+
+✅ Now, visiting `/feed/photo/123` shows:
+- Background: `/feed`
+- Foreground: `[id]/page.tsx` (in modal)
+
+──────────────────────────────
+📚 Summary of Patterns
+
+| Pattern       | Meaning                        | Use Case                              |
+|---------------|---------------------------------|----------------------------------------|
+| `(.)`         | Current segment                 | Modal over same route                 |
+| `(..)`        | One level up                    | Modal over parent layout              |
+| `(..)(..)`    | Two levels up                   | Modal from grandparent context        |
+| `(...)`       | App root (global interception)  | Modal from the entire app layout      |
+
+──────────────────────────────
+✅ Best Practices
+
+- Use `useSelectedLayoutSegment()` to detect the current segment for conditional modal rendering
+- Use intercepting routes **only in `app/` router**, not in `pages/`
+- Combine with `modal.tsx`, `drawer.tsx`, or other slot names in layout for effect
+
+🎯 Intercepting routes = navigation + overlay + layout-preserving UX
