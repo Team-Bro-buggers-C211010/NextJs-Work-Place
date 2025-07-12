@@ -1,0 +1,132 @@
+=======================================================
+📘 Notes on Handling Headers and Cookies in Next.js Route Handlers
+=======================================================
+
+In the `app/api/` directory, Route Handlers in Next.js allow server-side HTTP handling.
+This includes reading and writing **headers** and **cookies**.
+
+──────────────────────────────
+🔹 Reading Headers from Incoming Request
+
+```ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(req: NextRequest) {
+  const authToken = req.headers.get('authorization');
+  const userAgent = req.headers.get('user-agent');
+
+  return NextResponse.json({
+    token: authToken,
+    agent: userAgent,
+  });
+}
+```
+
+📝 Headers are case-insensitive and useful for authentication, content negotiation, etc.
+
+──────────────────────────────
+🔹 Setting Headers in Response
+
+```ts
+export async function GET() {
+  const response = NextResponse.json({ message: 'Hello with headers' });
+
+  response.headers.set('X-Custom-Header', 'ShovanDev');
+  response.headers.append('Cache-Control', 'no-store');
+
+  return response;
+}
+```
+
+──────────────────────────────
+
+🔹Cookies in route handlers
+
+Cookies are small pieces of data that a server sends to a user's web browser
+
+The browser can store the cookies and send them back to the same server with
+future requests
+
+Cookies serve three main purposes:
+
+- managing sessions (like user logins and shopping carts)
+- handling personalization (such as user preferences and themes)
+- tracking (like recording and analyzing user behavior)
+
+──────────────────────────────
+🔹 Reading Cookies (Request)
+
+Use `req.cookies.get()` from `NextRequest`:
+
+```ts
+export async function GET(req: NextRequest) {
+  const theme = req.cookies.get('theme')?.value;
+
+  return NextResponse.json({ theme });
+}
+```
+
+```
+// second way to set, and get cookies
+
+   const cookieStore = await cookies();
+   cookieStore.set("resultsPerPage", "10");
+   console.log("Results per page from cookies:", cookieStore.get("resultsPerPage"));
+
+```
+
+──────────────────────────────
+🔹 Setting Cookies (Response)
+
+Use `response.cookies.set()` to add cookies:
+
+```ts
+export async function GET() {
+  const response = NextResponse.json({ message: 'Cookie Set!' });
+
+  response.cookies.set({
+    name: 'theme',
+    value: 'dark',
+    path: '/',
+    httpOnly: true,
+    secure: true,
+  });
+
+  return response;
+}
+```
+
+✅ Options include:
+- `path`, `maxAge`, `httpOnly`, `secure`, `sameSite`
+
+──────────────────────────────
+🔹 Deleting Cookies
+
+```ts
+export async function GET() {
+  const response = NextResponse.json({ message: 'Cookie Deleted' });
+
+  response.cookies.delete('theme');
+  return response;
+}
+```
+
+──────────────────────────────
+🔍 Headers vs Cookies – When to Use
+
+| Use Case             | Use Headers                         | Use Cookies                        |
+|----------------------|--------------------------------------|-------------------------------------|
+| Auth/API tokens      | ✔️ Yes (`Authorization`)             | ✔️ Sometimes (`jwt` stored securely) |
+| Config/state (e.g., theme) | ❌ Better as cookie               | ✔️ Yes                               |
+| Stateless info       | ✔️ Yes                               | ❌ No                                |
+
+──────────────────────────────
+📚 Summary
+
+✅ Read headers: `req.headers.get('key')`  
+✅ Set headers: `response.headers.set('key', 'value')`  
+✅ Read cookies: `req.cookies.get('name')?.value`  
+✅ Set cookies: `response.cookies.set({...})`  
+✅ Delete cookies: `response.cookies.delete('name')`
+
+🎯 Powerful for secure session management, preferences, and auth workflows in Route Handlers.
