@@ -1,0 +1,101 @@
+=======================================================
+📘 Notes on Route Handlers in Next.js App Router
+=======================================================
+
+Route Handlers in Next.js allow you to define server-side logic for APIs directly in the `app` directory,
+similar to how you would with Express routes.
+
+✅ Supports HTTP methods like:
+- GET
+- POST
+- PATCH
+- DELETE
+- PUT
+- OPTIONS, etc.
+
+📁 Folder Structure:
+app/
+  api/
+    user/
+      route.ts
+
+──────────────────────────────
+🔹 GET Handler Example
+
+```ts
+// app/api/user/route.ts
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  const users = await fetchUsers();
+  return NextResponse.json(users);
+}
+```
+
+──────────────────────────────
+🔹 POST Handler Example
+
+```ts
+// app/api/user/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  const body = await req.json();
+  // Do something with body
+  return NextResponse.json({ message: "User created" });
+}
+```
+
+──────────────────────────────
+🔹 PATCH & DELETE Handler Example
+
+```ts
+export async function PATCH(req: NextRequest) {
+  const data = await req.json();
+  // Update logic
+  return NextResponse.json({ status: 'updated' });
+}
+
+export async function DELETE(req: NextRequest) {
+  const url = new URL(req.url);
+  const id = url.searchParams.get('id');
+  // Delete logic
+  return NextResponse.json({ status: 'deleted', id });
+}
+```
+
+──────────────────────────────
+🔸 Handling URL Query Params with NextRequest
+
+NextRequest is a special object provided by Next.js for Route Handlers.
+You can extract query parameters like:
+
+```ts
+export async function GET(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get('id');
+  return NextResponse.json({ id });
+}
+```
+
+──────────────────────────────
+🔍 NextRequest vs native Request
+
+| Feature              | `Request` (Web API)              | `NextRequest` (Next.js)          |
+|----------------------|----------------------------------|----------------------------------|
+| Provided By          | Browser (Fetch API)              | Next.js (server-side only)       |
+| Query param access   | Needs manual URL parse           | Built-in `req.nextUrl.searchParams` |
+| Headers              | Standard                         | Includes helpers like geo info   |
+| Extended API         | ❌ No                            | ✅ Has `.cookies`, `.geo`, etc.   |
+
+✅ Use `NextRequest` when working inside `app/api/.../route.ts` for rich API access.
+
+──────────────────────────────
+📚 Summary
+
+- Use `GET`, `POST`, `PATCH`, `DELETE` methods in `route.ts` file inside `app/api/`.
+- `NextRequest` gives access to enhanced features like cookies, headers, and query params.
+- `NextResponse` is used to send JSON or redirect responses.
+- Useful for building custom APIs without separate backend setup.
+
+🎯 Route Handlers = Lightweight, server-side APIs built right into your Next.js frontend.
