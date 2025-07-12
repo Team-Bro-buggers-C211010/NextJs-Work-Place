@@ -1,0 +1,89 @@
+=======================================================
+📘 Notes on Caching in Next.js (App Router) – GET Method Only
+=======================================================
+
+Caching is essential for performance optimization, reducing server load, and improving response times. In Next.js (App Router), caching is **only applicable to GET requests** in Route Handlers.
+
+──────────────────────────────
+🔹 Why Only GET?
+
+HTTP caching mechanisms are built for safe, idempotent operations.  
+GET is the only HTTP method that should return the same response without changing server state — making it suitable for caching.
+
+──────────────────────────────
+🔹 Types of Caching in Next.js
+
+✅ 1. **Full HTTP Response Caching**  
+✅ 2. **Custom Cache-Control Headers**  
+✅ 3. **Revalidation with fetch**  
+✅ 4. **Static and Dynamic Caching (Edge)**
+
+──────────────────────────────
+🔹 Setting Cache Headers in GET Route
+
+```ts
+import { NextResponse } from 'next/server';
+
+export async function GET() {
+  const res = NextResponse.json({ message: 'Cached Response' });
+
+  // Public cache, valid for 10 minutes
+  res.headers.set('Cache-Control', 'public, max-age=600');
+
+  return res;
+}
+```
+
+📌 Cache Directives:
+- `max-age=600` → cache for 10 minutes
+- `no-store` → disables caching
+- `s-maxage` → used by CDNs (like Vercel)
+- `stale-while-revalidate` → serves stale while revalidating in background
+
+──────────────────────────────
+🔹 Revalidation using fetch (Recommended)
+
+Next.js supports fetch caching directly via options:
+
+```ts
+export async function GET() {
+  const data = await fetch('https://api.example.com/posts', {
+    next: { revalidate: 60 } // Revalidate every 60 seconds
+  });
+
+  const json = await data.json();
+  return NextResponse.json(json);
+}
+```
+
+✅ `next: { revalidate: 0 }` → disables caching (on-demand revalidation)  
+✅ `next: { revalidate: 3600 }` → cache for 1 hour
+
+──────────────────────────────
+🔹 Skipping Cache Completely
+
+```ts
+const res = await fetch('https://api.example.com/user', {
+  cache: 'no-store'
+});
+```
+
+🛑 Avoid this in POST, PUT, DELETE — caching is only relevant in GET routes.
+
+──────────────────────────────
+🔍 Good Use Cases for Caching in GET
+
+- Public APIs (news, blogs, leaderboard, etc.)
+- Product listings, static data
+- Expensive or slow-to-generate queries
+- Pages served through CDN (static props)
+
+──────────────────────────────
+📚 Summary
+
+✅ Cache is **only used in GET** route handlers  
+✅ Use `Cache-Control` headers or `next.revalidate` in fetch  
+✅ Avoid using caching for POST, PATCH, DELETE  
+✅ Use `no-store` when dealing with sensitive/real-time data
+
+🎯 Smart caching reduces cost, improves user experience, and keeps your Next.js API lightning fast!

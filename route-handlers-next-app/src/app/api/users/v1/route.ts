@@ -1,16 +1,16 @@
 import { redirect } from "next/navigation";
 
 // Original v1 endpoint - basic user info
-type UserV1 = {
-  id: string;
-  email: string;
-  fullName: string; // Single name field
-  createdAt: string;
-};
+// type UserV1 = {
+//   id: string;
+//   email: string;
+//   fullName: string; // Single name field
+//   createdAt: string;
+// };
 
 export async function GET() {
   redirect("/api/users/v2"); // Redirect to v2 endpoint for enhanced user data
-  
+
   //   const users: UserV1[] = [
   //     {
   //       id: "550e8400-e29b-41d4-a716-446655440000",
