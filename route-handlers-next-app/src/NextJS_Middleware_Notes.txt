@@ -1,0 +1,139 @@
+=======================================================
+📘 Notes on Middleware in Next.js – How It Works & Use Cases
+=======================================================
+
+Middleware in Next.js runs **before** a request is completed and allows you to **modify the request/response**, 
+**rewrite**, **redirect**, **add headers**, or **authenticate** users.
+
+It's useful for logic that should apply to multiple routes **globally or conditionally**, like:
+- Auth checks
+- Role-based routing
+- Logging
+- Header manipulation
+- Locale redirection
+
+──────────────────────────────
+🔹 Where to Create Middleware
+
+Create a `middleware.ts` file at the root of your `app/` directory:
+
+```
+app/
+  middleware.ts
+```
+
+──────────────────────────────
+🔹 Basic Middleware Example
+
+```ts
+// app/middleware.ts
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+export function middleware(request: NextRequest) {
+  console.log("Middleware triggered at:", request.nextUrl.pathname);
+
+  return NextResponse.next(); // continue normally
+}
+```
+
+📝 You must export a `middleware()` function.  
+It automatically applies to all routes unless filtered using `matcher`.
+
+──────────────────────────────
+🔹 Use Case: Redirect If Not Authenticated
+
+```ts
+export function middleware(request: NextRequest) {
+  const token = request.cookies.get('auth_token')?.value;
+
+  if (!token && request.nextUrl.pathname !== '/login') {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  return NextResponse.next();
+}
+```
+
+──────────────────────────────
+🔹 Use Case: Add Custom Header
+
+```ts
+export function middleware(request: NextRequest) {
+  const response = NextResponse.next();
+  response.headers.set('x-powered-by', 'ShovanDev');
+  return response;
+}
+```
+
+──────────────────────────────
+🔹 Use Case: Rewrite Path
+
+```ts
+export function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  if (pathname === '/old-route') {
+    return NextResponse.rewrite(new URL('/new-route', request.url));
+  }
+
+  return NextResponse.next();
+}
+```
+
+──────────────────────────────
+🔹 Use Case: Geo Location Redirect (e.g., Vercel)
+
+```ts
+export function middleware(request: NextRequest) {
+  const country = request.geo?.country;
+
+  if (country === 'BD') {
+    return NextResponse.rewrite(new URL('/bd-home', request.url));
+  }
+
+  return NextResponse.next();
+}
+```
+
+──────────────────────────────
+🔹 Apply to Specific Routes Only (matcher)
+
+In `middleware.ts`, add a `config` export:
+
+```ts
+export const config = {
+  matcher: ['/dashboard/:path*', '/settings'],
+};
+```
+
+✅ This limits middleware to those routes only.
+
+──────────────────────────────
+🔸 Summary of What Middleware Can Do
+
+✅ ✅ ✅ Middleware can:
+
+- ✅ Redirect (e.g., to login)
+- ✅ Rewrite paths (e.g., /old → /new)
+- ✅ Set headers (e.g., cache-control, custom IDs)
+- ✅ Add or modify cookies
+- ✅ Perform access control/auth logic
+- ✅ Geo-aware redirection
+- ✅ Logging, analytics setup
+
+❌ Middleware cannot:
+- Access the response body
+- Perform expensive async operations (limited time)
+- Access database directly (recommended only in API routes)
+
+──────────────────────────────
+📚 Summary
+
+✅ Middleware runs on the Edge (globally)  
+✅ Used for auth, redirects, headers, localization  
+✅ Controlled via `matcher` patterns  
+✅ Use `NextRequest` and `NextResponse` from `next/server`
+
+🎯 Middleware = centralized control layer for all or selected routes.
+
