@@ -1,0 +1,46 @@
+📘 Dynamic Rendering in Next.js
+
+Definition:
+Dynamic rendering is a server rendering strategy where HTML is generated uniquely at request time, rather than during the build. This is essential for delivering personalized content to users.
+
+✅ When to Use Dynamic Rendering
+
+Use it when:
+- You need to access data only available at request time, such as:
+  - Cookies
+  - Request headers
+  - URL search parameters
+- You want to show user-specific or session-based content.
+
+Examples:
+- News websites
+- Personalized shopping/product pages
+- Social media feeds
+
+⚙️ How Dynamic Rendering Works in Next.js
+
+Next.js automatically switches to dynamic rendering for a route when it detects usage of a dynamic function/API, such as:
+- cookies()
+- headers()
+- draftMode()
+- searchParams prop
+- after()
+- connection()
+
+Using any of the above will opt the entire route into dynamic rendering.
+
+🔧 Forcing Dynamic Rendering
+
+If you want to explicitly force a route to render dynamically, use:
+
+export const dynamic = 'force-dynamic';
+
+Place it at the top of your route file (e.g., inside your page.tsx or page.jsx file).
+
+📝 Summary
+
+- Dynamic rendering generates HTML on each request.
+- It's automatically enabled in Next.js when dynamic functions are used.
+- Ideal for personalized or session-specific content.
+- No need to manually choose between static and dynamic — Next.js does it intelligently.
+- You can force dynamic rendering using the `dynamic` export.
