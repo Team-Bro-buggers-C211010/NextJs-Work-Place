@@ -1,0 +1,57 @@
+Static Rendering in Next.js — Explained with Example
+
+What is Static Rendering?
+In Next.js, Static Rendering means the HTML is pre-rendered at build time and served to users as a static file. 
+This enables ultra-fast load times, excellent SEO, and scalability via CDN.
+
+Key Points:
+- HTML is generated once during build using getStaticProps.
+- No server involvement on each request.
+- Ideal for blogs, marketing pages, or any non-frequently changing content.
+
+Example Without getStaticProps:
+
+// pages/about.js
+export default function About() {
+  console.log("About page rendered");
+  return (
+    <div>
+      <h1>About page load on: {new Date().toLocaleString()}</h1>
+    </div>
+  );
+}
+
+When used without getServerSideProps or getStaticProps, Next.js treats this as a statically generated page — rendered once at build time.
+
+Result:
+- The HTML file is generated once.
+- Visiting the page again won’t trigger new Date() again — the value remains static until a rebuild occurs.
+- console.log will not appear in the browser but will run during the build process.
+
+To Make It More Dynamic at Build Time:
+
+export async function getStaticProps() {
+  return {
+    props: {
+      timestamp: new Date().toLocaleString(),
+    },
+  };
+}
+
+export default function About({ timestamp }) {
+  return (
+    <div>
+      <h1>About page load on: {timestamp}</h1>
+    </div>
+  );
+}
+
+Here, the page still uses static generation, but with dynamic content injected at build time.
+
+Summary:
+- Static Rendering = Pre-rendered once at build time.
+- Use getStaticProps to fetch data or inject values into the component at build.
+- Pages without data-fetching methods default to static generation.
+- Best used for pages where data doesn’t change frequently.
+
+#NextJS #StaticRendering #SSG #ReactJS #WebDevelopment #Frontend #JavaScript #DevNotes
