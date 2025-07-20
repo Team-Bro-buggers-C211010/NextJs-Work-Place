@@ -1,0 +1,59 @@
+React 18 Suspense and SSR Improvements Overview
+-----------------------------------------------
+
+Problem: SSR Waterfall Drawbacks
+--------------------------------
+1. HTML rendering waits for all server-side data fetching to finish.
+2. Client hydration waits until all JavaScript is loaded.
+3. Entire page must be hydrated before any component becomes interactive.
+
+These result in an “all-or-nothing” waterfall, causing inefficiency when different parts of the app load at different speeds.
+
+React 18 <Suspense> Solution
+----------------------------
+Suspense component in React 18 introduces:
+1. HTML Streaming on the Server
+2. Selective Hydration on the Client
+
+HTML Streaming on the Server
+----------------------------
+- HTML can stream in as it's ready — no need to wait for all data.
+- Slow components won’t block the initial HTML.
+- These slow sections stream in later when ready.
+
+Hydration Bottleneck
+---------------------
+- Even with fast HTML, hydration waits for main JS code to load.
+- Solution: Code Splitting
+
+Code Splitting
+--------------
+- Splits non-urgent JS into separate scripts.
+- Use React.lazy for code splitting.
+- Core app code loads independently from heavy components.
+
+Selective Hydration on the Client
+---------------------------------
+- <Suspense> tells React to hydrate parts of the page independently.
+- React hydrates as components become ready.
+- Improves interactivity by not waiting for the entire page.
+
+Benefits:
+- Faster interactivity for headers, navbars, etc.
+- User interactions drive hydration priority.
+
+Drawbacks of Suspense SSR
+--------------------------
+1. **Large JS Bundle**: Even with streaming, the full page's code is downloaded eventually.
+   - Leads to bloated apps.
+
+2. **Hydrating Static Content**: All components are hydrated, even if they don’t need interactivity.
+   - Wastes performance and slows down time to interactivity.
+
+3. **Heavy JS Load on Clients**: Clients do most of the JS work.
+   - Slows down performance on low-powered devices.
+
+Open Questions:
+- Do users need to download so much JavaScript?
+- Should static components be hydrated at all?
+- Should we offload more work to the server?

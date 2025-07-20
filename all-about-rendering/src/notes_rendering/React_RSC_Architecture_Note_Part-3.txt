@@ -1,0 +1,108 @@
+=====================================================
+React Rendering Evolution: CSR → SSR → Suspense → RSC
+=====================================================
+
+1. The Evolution of React Rendering
+------------------------------------
+- CSR (Client-Side Rendering)
+- SSR (Server-Side Rendering)
+- Suspense for SSR
+- React Server Components (RSC)
+
+Suspense for SSR introduced:
+- HTML streaming on the server
+- Selective hydration on the client
+
+But challenges remained:
+- Large JavaScript bundles
+- Unnecessary hydration
+- Heavy client-side processing
+
+2. Introducing React Server Components (RSC)
+--------------------------------------------
+- RSC is a new rendering architecture introduced by the React team
+- It distinguishes between:
+  a. Client Components
+  b. Server Components
+
+Client Components:
+------------------
+- The traditional React components
+- Typically rendered on the client (CSR)
+- Can be server-rendered as HTML (SSR) to improve performance
+- Have access to:
+  - State, effects
+  - Browser APIs (e.g., localStorage, geolocation)
+  - Event handlers (clicks, typing)
+- "Client component" just helps differentiate from server-only components
+
+Server Components:
+------------------
+- Designed to run **exclusively on the server**
+- Code is never shipped to the client
+- Major benefits include:
+
+  a. Smaller Bundle Sizes:
+     - No hydration required
+     - JS and dependencies stay on the server
+
+  b. Direct Access to Server-Side Resources:
+     - Database queries
+     - File system operations
+
+  c. Enhanced Security:
+     - Sensitive logic like tokens/API keys never leave the server
+
+  d. Improved Data Fetching:
+     - Server-proximity improves fetch speed
+     - Fewer client-side requests
+
+  e. Caching:
+     - Cache rendered results per user/request
+     - Better performance and reduced server cost
+
+  f. Faster Initial Load & First Contentful Paint:
+     - HTML generated on the server, visible instantly
+
+  g. Improved SEO:
+     - Bots read server-rendered HTML better
+
+  h. Efficient Streaming:
+     - Streams partial HTML to client as it's ready
+
+RSC in Practice:
+----------------
+- Server Components handle:
+  - Data fetching
+  - Static content rendering
+
+- Client Components handle:
+  - Interactivity (clicks, inputs, etc.)
+
+- Combined architecture benefits:
+  - Fast, efficient pages
+  - Minimal JS download
+  - Full React capability (with improved performance)
+
+3. RSC Key Takeaways
+---------------------
+- Server Components:
+  - Stay on server, fetch data, render HTML
+  - No JS sent to browser
+  - Cannot manage interactivity
+
+- Client Components:
+  - Run in browser
+  - Handle all interactivity
+  - Can be pre-rendered for faster FCP
+
+4. RSC in Next.js
+------------------
+- Next.js App Router is built on React Server Components architecture
+- All RSC advantages are already integrated
+- Enables better performance, scalability, and DX out of the box
+
+Conclusion
+----------
+Understanding this progression (CSR → SSR → Suspense → RSC) lays the foundation
+for mastering rendering in modern React and Next.js.
