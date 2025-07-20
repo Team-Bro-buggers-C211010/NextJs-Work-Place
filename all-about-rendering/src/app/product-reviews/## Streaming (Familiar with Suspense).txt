@@ -1,0 +1,15 @@
+## Streaming (Familiar with Suspense in React)
+
+Streaming is a strategy that allows for progressive UI rendering from the server
+
+Work is broken down into smaller chunks and streamed to the client as soon as
+they're ready
+
+This means users can see parts of the page right away, without waiting for
+everything to load
+
+It's particularly powerful for improving initial page load times and handling UI
+elements that depend on slower data fetches, which would normally hold up the
+entire route
+
+Streaming comes built right into the App Router
