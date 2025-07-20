@@ -1,0 +1,90 @@
+Rendering Lifecycle in React Server Components (RSC)
+
+Overview:
+React Server Components (RSC) introduce a different rendering model from traditional client-rendered or hybrid (SSR + CSR) applications. The lifecycle and rendering process of a page using RSC involve multiple steps that span between the browser, the Next.js server, and React’s rendering engine. Below is a breakdown of how rendering happens on load and on update.
+
+———————————————————————————————————————————————————————
+1. INITIAL PAGE LOAD (SERVER + BROWSER)
+———————————————————————————————————————————————————————
+
+1.1 Request Initiated (Browser)
+- The browser requests a URL (e.g., /products).
+- It sends an HTTP request to the Next.js server.
+
+1.2 Next.js Routing and RSC Handling (Server)
+- Next.js determines whether this route includes any React Server Components.
+- If so, it triggers React to render the server components.
+- The RSC payload is generated: this is **not HTML**, but a serialized stream describing the React component tree from the server.
+
+1.3 Server-Side Rendering (SSR with Streaming)
+- React renders the page using a mix of RSC and traditional SSR.
+- If `<Suspense>` is used in the component tree, Next.js can begin streaming parts of the HTML immediately while RSC data continues loading.
+
+1.4 RSC Payload Sent to Browser
+- The RSC payload is streamed to the browser, typically alongside the HTML shell.
+- This includes module references, props, and component tree descriptions.
+
+1.5 Hydration Begins (Browser + React)
+- As the HTML is parsed by the browser, React begins selective hydration.
+- JavaScript bundles are fetched (e.g., via `React.lazy` or dynamic import).
+- Interactivity is enabled progressively as each piece of JS is executed.
+
+1.6 Final Output
+- Browser shows static content as soon as HTML arrives.
+- Interactivity is enabled piece by piece as JavaScript loads.
+- RSC allows static + interactive blend efficiently.
+
+———————————————————————————————————————————————————————
+2. ON UPDATE (CLIENT NAVIGATION OR ACTION)
+———————————————————————————————————————————————————————
+
+2.1 User Navigates (Browser)
+- User clicks a link or triggers navigation via router (e.g., `next/link`, `useRouter().push()`).
+- No full page reload — a client-side fetch occurs.
+
+2.2 Request to Next.js Server
+- Browser sends fetch/XHR request to Next.js for the next route’s RSC payload.
+- No full HTML needed, just RSC stream.
+
+2.3 RSC Payload Generation (Server)
+- Server re-runs relevant RSCs for the new route or the dynamic parts that changed.
+- It returns the RSC stream with updated data and layout tree.
+
+2.4 React on Client Receives Payload
+- React parses the RSC stream in the browser.
+- Updates the React component tree accordingly.
+- Minimal diffing occurs — only changed parts are updated (fast & efficient).
+
+2.5 Hydration / Re-Hydration (if needed)
+- If new interactive components appear, React hydrates them selectively.
+- No need to rehydrate previously rendered parts unless they changed.
+
+2.6 Final Output
+- Page updates with minimal DOM manipulation.
+- Fast interaction without full reload or re-hydration.
+
+———————————————————————————————————————————————————————
+Benefits of This Model:
+———————————————————————————————————————————————————————
+- Less JavaScript sent to the client initially.
+- Components that don’t need interactivity never hydrate.
+- Server can do more rendering work, reducing load on the client.
+- Streaming and selective hydration improve Time to Interactive (TTI).
+- Good DX: composable, cacheable, and modular components.
+
+———————————————————————————————————————————————————————
+What’s in the RSC Payload?
+———————————————————————————————————————————————————————
+- Serialized component tree and props.
+- Dynamic values resolved server-side.
+- References to client components (if used).
+- Lazy loading markers for `<Suspense>` boundaries.
+- Metadata like layout hierarchy and head changes.
+
+———————————————————————————————————————————————————————
+Conclusion:
+———————————————————————————————————————————————————————
+RSC introduces a new paradigm where static and dynamic rendering is separated.
+Initial load uses SSR + RSC + streaming + selective hydration.
+Updates use client fetches + RSC payloads + minimal diffing.
+It reduces JS bloat, improves performance, and gives developers fine-grained control.
