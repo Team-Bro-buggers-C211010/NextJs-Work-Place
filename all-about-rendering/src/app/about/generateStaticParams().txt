@@ -1,0 +1,24 @@
+generateStaticParams()
+
+generateStaticParams is a function that (SSG)
+
+- works alongside dynamic route segments
+- to generate static routes during build time
+- instead of on demand at request time
+- giving us a nice performance boost
+
+Multiple dynamic route segments
+
+Suppose we have a product catalog with categories and products
+
+/products/[category]/[product]/page.tsx
+
+export async function generateStaticParams () {
+return [
+{ category: "electronics", product: "smartphone" },
+{ category: "electronics", product: "laptop" },
+{ category: "books", product: "science-fiction" },
+{ category: "books", product: "biography" },
+
+1;
+}
