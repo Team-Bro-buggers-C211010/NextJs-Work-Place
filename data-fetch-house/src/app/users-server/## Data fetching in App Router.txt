@@ -39,3 +39,15 @@ calls during the same render pass
 - Lets you write data-fetching code exactly where you need it rather than having to
 centralize fetches and pass data down through propsReact will only make the actual fetch once and reuse the result for subsequent
 calls during the same render pass
+
+
+# Loading and Error states (Server Side)
+
+While client components require you to manage these states with separate
+variables and conditional rendering, server components make this process much
+cleaner
+
+To implement a loading state, all we need to do is define and export a React
+component in loading.tsx
+
+For handling errors, define and export a React component in error.tsx
