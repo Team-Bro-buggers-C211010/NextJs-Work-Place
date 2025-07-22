@@ -72,3 +72,8 @@ We'll create a Posts component
 - for each post, fetch author using the userld property
 - example of sequential fetching because we need the userld from each post
 before we can fetch its author
+
+
+=> Parallel: requests in a route are eagerly initiated and will load data at the same
+time. This reduces the total time it takes to load data.
+
