@@ -51,3 +51,24 @@ To implement a loading state, all we need to do is define and export a React
 component in loading.tsx
 
 For handling errors, define and export a React component in error.tsx
+
+
+## Data fetching patterns
+
+When fetching data inside components, you need to be aware of two data fetching
+patterns:
+
+1. Sequential
+2. Parallel
+
+=> Sequential: requests in a component tree are dependent on each other. This can
+lead to longer loading times.
+
+# Sequential fetching
+
+We'll create a Posts component
+
+- fetches all posts
+- for each post, fetch author using the userld property
+- example of sequential fetching because we need the userld from each post
+before we can fetch its author
